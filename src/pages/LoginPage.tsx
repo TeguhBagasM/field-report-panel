@@ -24,7 +24,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   if (!loading && user) {
-    return <Navigate to="/reports" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -34,7 +34,7 @@ export default function LoginPage() {
     try {
       await login(email.trim(), password);
       toast.success("Login berhasil. Selamat datang!");
-      navigate("/reports", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       const message = getErrorMessage(err);
       setError(message);

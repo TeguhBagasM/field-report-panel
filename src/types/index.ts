@@ -66,3 +66,18 @@ export interface LoginResponse {
   token: string;
   user: User;
 }
+
+/** GET /dashboard/summary — bentuk JSON mengikuti dashboard.service.ts. */
+export interface DashboardSummary {
+  totals: { total: number; pending: number; approved: number; rejected: number };
+  trend: Array<{ date: string; count: number }>;
+  recent: Report[];
+  awaiting: Report[] | null;
+  myDecisions: { total: number; approved: number; rejected: number } | null;
+  users: {
+    total: number;
+    active: number;
+    inactive: number;
+    byRole: { admin: number; pelapor: number; approver: number };
+  } | null;
+}

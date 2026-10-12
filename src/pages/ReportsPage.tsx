@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
@@ -33,7 +34,11 @@ export default function ReportsPage() {
   const toast = useToast();
 
   const [reports, setReports] = useState<Report[]>([]);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
+  const [searchParams] = useSearchParams();
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(() => {
+    const q = searchParams.get("status");
+    return q === "pending" || q === "approved" || q === "rejected" ? q : "";
+  });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);

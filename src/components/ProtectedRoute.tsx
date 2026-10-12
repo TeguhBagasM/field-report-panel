@@ -30,7 +30,7 @@ export default function ProtectedRoute({ roles, children }: ProtectedRouteProps)
         <div className="card forbidden">
           <h1>Tidak punya akses</h1>
           <p>Akun Anda ({user.role}) tidak berhak membuka halaman ini.</p>
-          <a className="btn btn-primary" href="/reports">
+          <a className="btn btn-primary" href="/dashboard">
             Kembali ke Laporan
           </a>
         </div>
