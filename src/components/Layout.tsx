@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
@@ -16,7 +17,7 @@ function readCollapsed(): boolean {
   return window.matchMedia("(max-width: 1023px)").matches;
 }
 
-export default function Layout() {
+export default function Layout({ children }: { children?: ReactNode }) {
   const [collapsed, setCollapsed] = useState<boolean>(readCollapsed);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 767px)");
@@ -87,7 +88,7 @@ export default function Layout() {
         <div className="drawer-backdrop" onClick={handleCloseDrawer} aria-hidden="true" />
       )}
       <main className="container">
-        <Outlet />
+        {children ?? <Outlet />}
       </main>
     </div>
   );

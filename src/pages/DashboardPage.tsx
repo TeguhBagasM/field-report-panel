@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Check, Clock, FileText, X } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
+import { useColdStartNotice } from "../hooks/useColdStartNotice";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import StatusBadge from "../components/StatusBadge";
 import ReportFormModal from "../components/ReportFormModal";
@@ -240,6 +241,7 @@ export default function DashboardPage() {
   const [reloadKey, setReloadKey] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
   const [decision, setDecision] = useState<{ report: Report; decision: Decision } | null>(null);
+  const showColdStart = useColdStartNotice(loading);
 
   const reload = useCallback(() => setReloadKey((k) => k + 1), []);
 
@@ -305,6 +307,11 @@ export default function DashboardPage() {
         <div className="page-head">
           <div>
             <h1 className="page-title">Dashboard</h1>
+            {showColdStart && (
+              <p className="muted small" role="status">
+                Server sedang bangun, mohon tunggu sebentar...
+              </p>
+            )}
           </div>
         </div>
         <div className="stat-grid">

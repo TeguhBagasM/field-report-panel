@@ -76,30 +76,31 @@ export default function ReportsPage() {
       setLoading(true);
       setError(null);
       try {
-        const result = await listReports({
-          status: statusFilter === "" ? undefined : statusFilter,
-          page,
-          limit: PAGE_SIZE,
-        });
+        // Paralel: daftar utama + 3 hitungan status jalan bersamaan,
+        // bukan berurutan (menghemat ~1 round-trip beruntun).
+        // Hitungan dibiarkan gagal tanpa menggagalkan daftar utama.
+        const [result, pending, approved, rejected] = await Promise.all([
+          listReports({
+            status: statusFilter === "" ? undefined : statusFilter,
+            page,
+            limit: PAGE_SIZE,
+          }),
+          listReports({ status: "pending", page: 1, limit: 1 }).catch(() => null),
+          listReports({ status: "approved", page: 1, limit: 1 }).catch(() => null),
+          listReports({ status: "rejected", page: 1, limit: 1 }).catch(() => null),
+        ]);
         if (cancelled) return;
         setReports(result.data);
         setTotalPages(result.meta.totalPages);
         setTotal(result.meta.total);
-        try {
-          const [pending, approved, rejected] = await Promise.all([
-            listReports({ status: "pending", page: 1, limit: 1 }),
-            listReports({ status: "approved", page: 1, limit: 1 }),
-            listReports({ status: "rejected", page: 1, limit: 1 }),
-          ]);
-          if (!cancelled) {
-            setCounts({
-              pending: pending.meta.total,
-              approved: approved.meta.total,
-              rejected: rejected.meta.total,
-            });
-          }
-        } catch {
-          if (!cancelled) setCounts(null);
+        if (pending && approved && rejected) {
+          setCounts({
+            pending: pending.meta.total,
+            approved: approved.meta.total,
+            rejected: rejected.meta.total,
+          });
+        } else {
+          setCounts(null);
         }
       } catch (err) {
         if (cancelled) return;

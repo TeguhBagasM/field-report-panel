@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
+import { useColdStartNotice } from "../hooks/useColdStartNotice";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { getErrorMessage } from "../api/client";
 
@@ -15,15 +16,16 @@ const DEMO_ACCOUNTS = [
 
 export default function LoginPage() {
   useDocumentTitle("Masuk");
-  const { user, loading, login } = useAuth();
+  const { user, login } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const showColdStart = useColdStartNotice(submitting);
 
-  if (!loading && user) {
+  if (user) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -83,6 +85,11 @@ export default function LoginPage() {
             {submitting && <span className="spinner spinner-xs" aria-hidden="true" />}
             {submitting ? "Memproses..." : "Login"}
           </button>
+          {showColdStart && (
+            <p className="muted small" role="status">
+              Server sedang bangun, mohon tunggu sebentar...
+            </p>
+          )}
         </form>
         <div className="demo-box">
           <h2>Akun demo</h2>
